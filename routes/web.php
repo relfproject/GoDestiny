@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DestinationController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BlogController;
 
 // Halaman depan (user biasa)
 Route::get('/', [DestinationController::class, 'home'])->name('home');
@@ -11,6 +12,12 @@ Route::get('/destinations', [DestinationController::class, 'index'])->name('dest
 
 // Halaman detail destinasi
 Route::get('/destination/{slug}', [DestinationController::class, 'show'])->name('destination.show');
+
+Route::get('/search', [DestinationController::class, 'search'])->name('search');
+
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 // Admin & Dashboard
 Route::middleware(['auth', 'admin'])->group(function () {
