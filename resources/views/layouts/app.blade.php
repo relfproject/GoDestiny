@@ -101,6 +101,7 @@
                     </li>
 
                     @auth
+
                         <li class="nav-item">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
