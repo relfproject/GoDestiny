@@ -2,19 +2,22 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Destination extends Model
 {
-    use HasFactory;
+    protected $fillable = ['name','location','description','facilities','image','slug'];
 
-    protected $fillable = [
-        'name',
-        'slug',
-        'location',
-        'description',
-        'facilities',
-        'image',
-    ];
+    // Generate slug otomatis sebelum save
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($destination) {
+            if (empty($destination->slug)) {
+                $destination->slug = Str::slug($destination->name);
+            }
+        });
+    }
 }

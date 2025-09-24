@@ -101,7 +101,6 @@
                     </li>
 
                     @auth
-                        <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a></li>
                         <li class="nav-item">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -110,6 +109,7 @@
                         </li>
                     @else
                         <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Sign Up</a></li>
                     @endauth
                 </ul>
             </div>
