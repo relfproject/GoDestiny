@@ -3,6 +3,8 @@
 use App\Http\Controllers\DestinationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ReviewController;
+
 
 // Halaman depan (user biasa)
 Route::get('/', [DestinationController::class, 'home'])->name('home');
@@ -18,6 +20,14 @@ Route::get('/search', [DestinationController::class, 'search'])->name('search');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+
+Route::get('/dashboard-modern', function () {
+    return view('dashboard-modern');
+});
+
+Route::post('/destinations/{destination}/reviews', [ReviewController::class, 'store'])->name('review.store');
+
+
 
 // Admin & Dashboard
 Route::middleware(['auth', 'admin'])->group(function () {

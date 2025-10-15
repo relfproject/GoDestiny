@@ -94,30 +94,110 @@
     </section>
 
     <!-- Reviews Section -->
-    <section class="py-5 bg-light">
-        <div class="container">
-            <h2 class="fw-bold text-center mb-5" data-aos="fade-up">What Visitors Say</h2>
-            <div class="row g-4">
-                <div class="col-md-4" data-aos="zoom-in">
-                    <div class="card border-0 shadow-sm p-4">
-                        <p class="text-muted">"Amazing place! The waterfall is breathtaking and worth the trip."</p>
-                        <h6 class="fw-bold mb-0">– Sarah, Traveler</h6>
+<section class="container py-5">
+    <h2 class="fw-bold text-center mb-5">Our Customer Reviews</h2>
+
+    @php
+        $averageRating = round($destination->reviews->avg('rating'), 1);
+        $ratingCount = $destination->reviews->count();
+        $ratingGroups = $destination->reviews->groupBy('rating')->map->count();
+    @endphp
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-lg rounded-4 p-5 mb-5">
+                <div class="row align-items-center">
+                    <!-- Grafik Rating -->
+                    <div class="col-md-7">
+                        @for ($i = 5; $i >= 1; $i--)
+                            @php
+                                $percent = $ratingCount ? (($ratingGroups[$i] ?? 0) / $ratingCount) * 100 : 0;
+                            @endphp
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="me-2 fw-medium" style="width: 50px;">{{ $i }} ★</span>
+                                <div class="progress flex-grow-1" style="height: 8px;">
+                                    <div class="progress-bar bg-warning" role="progressbar"
+                                        style="width: {{ $percent }}%" aria-valuenow="{{ $percent }}" aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                </div>
+                                <span class="ms-3 text-muted">{{ $ratingGroups[$i] ?? 0 }}</span>
+                            </div>
+                        @endfor
                     </div>
-                </div>
-                <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="card border-0 shadow-sm p-4">
-                        <p class="text-muted">"Clean facilities and great guides. Would recommend to anyone visiting
-                            Madura."</p>
-                        <h6 class="fw-bold mb-0">– Andi, Backpacker</h6>
-                    </div>
-                </div>
-                <div class="col-md-4" data-aos="zoom-in" data-aos-delay="400">
-                    <div class="card border-0 shadow-sm p-4">
-                        <p class="text-muted">"Perfect for a family trip, kids loved it!"</p>
-                        <h6 class="fw-bold mb-0">– Maria, Family Traveler</h6>
+
+                    <!-- Nilai Rata-rata -->
+                    <div class="col-md-5 text-center">
+                        <h1 class="display-4 fw-bold text-warning mb-1">{{ $averageRating ?: '0.0' }}</h1>
+                        <div class="mb-2">
+                            @for($i = 1; $i <= 5; $i++)
+                                <i class="fas fa-star {{ $i <= $averageRating ? 'text-warning' : 'text-secondary' }}"></i>
+                            @endfor
+                        </div>
+                        <p class="text-muted mb-0">{{ $ratingCount }} Ratings</p>
                     </div>
                 </div>
             </div>
+
+            <!-- Daftar Review -->
+            @forelse ($destination->reviews as $review)
+                <div class="border-bottom pb-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="d-flex align-items-center">
+                            <div
+                                class="rounded-circle bg-warning-subtle text-warning fw-bold d-flex align-items-center justify-content-center me-3"
+                                style="width: 45px; height: 45px;">
+                                {{ strtoupper(substr($review->name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-semibold">{{ $review->name }}</h6>
+                                <div class="text-warning">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        <i
+                                            class="fas fa-star {{ $i <= $review->rating ? 'text-warning' : 'text-muted' }}"></i>
+                                    @endfor
+                                </div>
+                            </div>
+                        </div>
+                        <small class="text-muted">{{ $review->created_at->format('M d, Y') }}</small>
+                    </div>
+                    <p class="text-secondary mb-0">{{ $review->comment }}</p>
+                </div>
+            @empty
+                <p class="text-center text-muted">No reviews yet. Be the first to review this destination!</p>
+            @endforelse
+
+            <!-- Form Tambah Review -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 mt-5">
+                <h5 class="fw-bold mb-3">Leave a Review</h5>
+                <form method="POST" action="{{ route('review.store', $destination) }}">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" name="name" class="form-control rounded-3" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label d-block">Rating</label>
+                        <div class="rating d-flex gap-2">
+                            @for ($i = 1; $i <= 5; $i++)
+                                <input type="radio" name="rating" value="{{ $i }}" class="btn-check" id="rate-{{ $i }}"
+                                    required>
+                                <label class="btn btn-outline-warning rounded-circle" for="rate-{{ $i }}">
+                                    <i class="fas fa-star"></i>
+                                </label>
+                            @endfor
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Comment</label>
+                        <textarea name="comment" rows="3" class="form-control rounded-3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-warning text-white fw-semibold px-4">Submit Review</button>
+                </form>
+            </div>
         </div>
-    </section>
+    </div>
+</section>
+
+
+
 @endsection

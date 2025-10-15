@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 class Destination extends Model
 {
-    protected $fillable = ['name','location','description','facilities','image','slug'];
+    protected $fillable = ['name', 'location', 'description', 'facilities', 'image', 'slug'];
 
     // Generate slug otomatis sebelum save
     protected static function boot()
@@ -20,4 +20,15 @@ class Destination extends Model
             }
         });
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function averageRating()
+    {
+        return $this->reviews()->avg('rating') ?? 0;
+    }
+
 }

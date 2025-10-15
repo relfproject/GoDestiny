@@ -7,10 +7,13 @@ use Illuminate\Http\Request;
 
 class DestinationController extends Controller
 {
-    // Halaman depan (ambil 5 destinasi terbaru)
+    // Halaman depan (home)
     public function home()
     {
-        $destinations = Destination::latest()->take(5)->get();
+        // Ambil semua destinasi dengan review-nya
+        $destinations = Destination::with('reviews')->latest()->get();
+
+        // Kirim ke view home.blade.php
         return view('home', compact('destinations'));
     }
 
@@ -24,7 +27,7 @@ class DestinationController extends Controller
     // Halaman detail destinasi
     public function show($slug)
     {
-        $destination = Destination::where('slug', $slug)->firstOrFail();
+        $destination = Destination::where('slug', $slug)->with('reviews')->firstOrFail();
         return view('destinations.show', compact('destination'));
     }
 

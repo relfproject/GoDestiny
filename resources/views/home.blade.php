@@ -78,58 +78,61 @@
         </div>
     </section>
 
-    <!-- Testimonials (Carousel) -->
-    <section class="py-5">
-        <div class="container text-center">
-            <h2 class="fw-bold mb-5">💬 Traveler Testimonials</h2>
-            <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <div class="card p-4 shadow border-0 rounded-4 mx-auto" style="max-width: 500px;">
-                            <p class="fst-italic">"GoDestiny made our trip unforgettable. Everything was smooth & amazing!"</p>
-                            <h6 class="fw-bold mb-0">Sarah Johnson</h6>
-                            <small class="text-muted">USA</small>
+    <!-- Customer Reviews Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="fw-bold text-center mb-5" data-aos="fade-up">What Our Visitors Say</h2>
+
+        <div class="row g-4">
+            @foreach ($destinations->take(3) as $destination)
+                @php
+                    $averageRating = round($destination->reviews->avg('rating'), 1);
+                    $latestReview = $destination->reviews->sortByDesc('created_at')->first();
+                @endphp
+
+                @if ($latestReview)
+                    <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="{{ asset('storage/' . $destination->image) }}"
+                                    alt="{{ $destination->name }}"
+                                    class="rounded-circle me-3" width="60" height="60"
+                                    style="object-fit: cover;">
+                                <div>
+                                    <h6 class="fw-bold mb-1">{{ $destination->name }}</h6>
+                                    <div class="text-warning">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <i class="fas fa-star {{ $i <= $averageRating ? 'text-warning' : 'text-muted' }}"></i>
+                                        @endfor
+                                        <small class="text-muted ms-2">({{ $averageRating }})</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p class="text-muted fst-italic mb-2">
+                                “{{ Str::limit($latestReview->comment, 120) }}”
+                            </p>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div
+                                        class="rounded-circle bg-warning-subtle text-warning fw-bold d-flex align-items-center justify-content-center me-2"
+                                        style="width: 35px; height: 35px;">
+                                        {{ strtoupper(substr($latestReview->name, 0, 1)) }}
+                                    </div>
+                                    <small class="fw-semibold">{{ $latestReview->name }}</small>
+                                </div>
+                                <a href="{{ route('destination.show', $destination->slug) }}"
+                                   class="btn btn-sm btn-outline-warning rounded-pill px-3">
+                                    See More
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div class="carousel-item">
-                        <div class="card p-4 shadow border-0 rounded-4 mx-auto" style="max-width: 500px;">
-                            <p class="fst-italic">"One of the best travel experiences of my life. Highly recommended."</p>
-                            <h6 class="fw-bold mb-0">Michael Lee</h6>
-                            <small class="text-muted">Singapore</small>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="card p-4 shadow border-0 rounded-4 mx-auto" style="max-width: 500px;">
-                            <p class="fst-italic">"Booking was easy, guides were professional, and destinations breathtaking!"</p>
-                            <h6 class="fw-bold mb-0">Ayu Kartika</h6>
-                            <small class="text-muted">Indonesia</small>
-                        </div>
-                    </div>
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon"></span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon"></span>
-                </button>
-            </div>
+                @endif
+            @endforeach
         </div>
-    </section>
+    </div>
+</section>
+
 @endsection
 
-@push('styles')
-    <style>
-        .hover-card {
-            transition: transform 0.35s ease, box-shadow 0.35s ease;
-        }
-        .hover-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-        }
-        .text-gradient {
-            background: linear-gradient(90deg, #ff8a00, #e52e71);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-    </style>
-@endpush
